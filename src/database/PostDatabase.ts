@@ -23,8 +23,8 @@ export class PostDatabase extends BaseDatabase{
     }
 
 
-    public async updatePost(newPostDB: CreatePost, id: string | undefined): Promise <void>{
-        await BaseDatabase.connection(PostDatabase.TABLE_POST).update(newPostDB).where({id})
+    public async updatePost(newPostDB: CreatePost): Promise <void>{
+        await BaseDatabase.connection(PostDatabase.TABLE_POST).update(newPostDB).where({id: newPostDB.id})
     }
 
 

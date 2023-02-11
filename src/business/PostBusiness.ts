@@ -59,4 +59,77 @@ export class PostBusiness{
 
         return output
     }
+
+    public editPost = async (input: any) => {
+        const {
+            idToEdit,
+            newContent,
+        } = input
+
+        if(newContent !== undefined){
+            if(typeof newContent !== "string"){
+                throw new Error ("Name deve ser string")
+            }
+
+            if(newContent.length < 2){
+                throw new Error ("Content deve possuir pelo um caracter")
+            }
+        }
+
+        const postDatabase = new PostDatabase()
+        const postToEditDB = await postDatabase.findPostsById(idToEdit)
+
+        if(!postToEditDB){
+            throw new Error("O post não foi encontrado. Verifique a id.")
+        }
+
+        const post = new Post (
+            postToEditDB.id,
+            postToEditDB.creator_id,
+            postToEditDB.content,
+            postToEditDB.likes,
+            postToEditDB.dislikes,
+            postToEditDB.created_at,
+            postToEditDB.updated_at
+        )
+
+        newContent && post.setContent(newContent)
+
+
+        const updatedPostDB: CreatePost = {
+            id: post.getId(),
+            creator_id: post.getCreatorId(),
+            content: post.getContent()
+        }
+
+
+        await postDatabase.updatePost(updatedPostDB)
+
+        const output = {
+            message: "Post atualizado com sucesso!",
+            post: post
+        }
+
+        return output
+    }
+    
+    public deletePost = async (input: any) => {
+        const { idToDelete } = input 
+
+        const postDatabase = new PostDatabase()
+        const postToDeleteDB = await postDatabase.findPostsById(idToDelete)
+
+        if(!postToDeleteDB){
+            throw new Error ("Post não encontrado. Verifique a id.")
+        }
+
+        await postDatabase.deletePost(postToDeleteDB.id)
+
+        const output = {
+            message: "Post deletado com sucesso"
+        }
+
+        return output
+    }
+    
 }
