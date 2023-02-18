@@ -1,6 +1,12 @@
-export enum ROLE_USER{
-    ADMIN = "Administrador",
-    USER = "Usuário"
+export enum USER_ROLES{
+    NORMAL = "NORMAL",
+    ADMIN = "ADMIN"
+}
+
+export interface TokenPayload {
+    id: string,
+	name: string,
+    role: USER_ROLES
 }
 
 export interface UserDB{
@@ -8,8 +14,17 @@ export interface UserDB{
     name: string,
     email: string,
     password: string,
-    role: ROLE_USER,
+    role: USER_ROLES,
     created_at: string
+}
+
+export interface UserModel {
+    id: string,
+    name: string,
+    email: string,
+    password: string,
+    role: USER_ROLES,
+    createdAt: string
 }
 
 export interface PostDB{
@@ -20,6 +35,19 @@ export interface PostDB{
     dislikes: number,
     created_at: string,
     updated_at: string
+}
+
+export interface PostModel{
+    id: string,
+    content: string,
+    likes: number,
+    dislikes: number,
+    createdAt: string,
+    updatedAt: string,
+    creator: {
+        id: string,
+        name: string
+    }
 }
 
 export interface CreatePost{
