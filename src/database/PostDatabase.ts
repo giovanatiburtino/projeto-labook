@@ -20,17 +20,10 @@ export class PostDatabase extends BaseDatabase{
         return result
     }
 
-    public async findPosts(){ //método async do index
-      
-        const postsDB: PostDB[] = await BaseDatabase.connection(PostDatabase.TABLE_POSTS)
-        
-        return postsDB
-    }
+    public async findPostsById(id: string): Promise <PostDB | undefined> {
+        const result: PostDB[] = await BaseDatabase.connection(PostDatabase.TABLE_POSTS).select().where({id})
 
-    public async findPostsById(id: string | undefined){
-        const [postsDB]: PostDB[] | undefined = await BaseDatabase.connection(PostDatabase.TABLE_POSTS).where({id})
-
-        return postsDB
+        return result[0]
     }
 
     public async insertPost(newPostDB: PostDB): Promise <void>{
@@ -38,8 +31,8 @@ export class PostDatabase extends BaseDatabase{
     }
 
 
-    public async updatePost(newPostDB: CreatePost): Promise <void>{
-        await BaseDatabase.connection(PostDatabase.TABLE_POSTS).update(newPostDB).where({id: newPostDB.id})
+    public async updatePost(idToEdit: string, newPostDB: PostDB): Promise <void>{
+        await BaseDatabase.connection(PostDatabase.TABLE_POSTS).update(newPostDB).where({id: idToEdit})
     }
 
 

@@ -1,5 +1,5 @@
 import { PostDatabase } from "../database/PostDatabase"
-import { CreatePostInputDTO, GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
+import { CreatePostInputDTO, EditPostInputDTO, GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
 import { BadRequestError } from "../errors/BaseRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
@@ -86,76 +86,78 @@ export class PostBusiness{
         await this.postDatabase.insertPost(newPostDB)
     }
 
-    // public editPost = async (input: any) => {
-    //     const {
-    //         idToEdit,
-    //         newContent,
-    //     } = input
+    public editPost = async (input: EditPostInputDTO) => {
+        const { idToEdit, token, content } = input
 
-    //     if(newContent !== undefined){
-    //         if(typeof newContent !== "string"){
-    //             throw new BadRequestError("Name deve ser string")
-    //         }
 
-    //         if(newContent.length < 2){
-    //             throw new BadRequestError("Content deve possuir pelo um caracter")
-    //         }
-    //     }
+        if(token === undefined){
+            throw new BadRequestError("'Token' ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+        
+        if(payload === null){
+            throw new BadRequestError("Token inválido.")
+        }
+
+
+        if(typeof content !== "string"){
+            throw new BadRequestError("Content deve ser string")
+        }
+
+        if(content.length < 2){
+            throw new BadRequestError("Content deve possuir pelo um caracter")
+        }
+        
+
+
+        const postToEditDB: PostDB | undefined = await this.postDatabase.findPostsById(idToEdit)
+
+        if(!postToEditDB){
+            throw new NotFoundError("O post não foi encontrado. Verifique a id.")
+        }
+
+        if(postToEditDB.creator_id !== payload.id){
+            throw new BadRequestError("Somente quem criou a playlist pode edita-la.")
+        }
+       
+
+        const post = new Post(
+            postToEditDB.id,
+            postToEditDB.content,
+            postToEditDB.likes,
+            postToEditDB.dislikes,
+            postToEditDB.created_at,
+            postToEditDB.updated_at,
+            payload.id,
+            payload.name
+        )
+
+        post.setContent(content)
+        post.setUpdatedAt(new Date().toISOString())
+
+        const updatedPostDB = post.toDBModel()
+
+        await this.postDatabase.updatePost(idToEdit, updatedPostDB)
+    }
+    
+    // public deletePost = async (input: any) => {
+    //     const { idToDelete } = input 
 
     //     const postDatabase = new PostDatabase()
-    //     const postToEditDB = await postDatabase.findPostsById(idToEdit)
+    //     const postToDeleteDB = await postDatabase.findPostsById(idToDelete)
 
-    //     if(!postToEditDB){
-    //         throw new NotFoundError("O post não foi encontrado. Verifique a id.")
+    //     if(!postToDeleteDB){
+    //         throw new NotFoundError("Post não encontrado. Verifique a id.")
     //     }
 
-    //     const post = new Post (
-    //         postToEditDB.id,
-    //         postToEditDB.creator_id,
-    //         postToEditDB.content,
-    //         postToEditDB.likes,
-    //         postToEditDB.dislikes,
-    //         postToEditDB.created_at,
-    //         postToEditDB.updated_at
-    //     )
-
-    //     newContent && post.setContent(newContent)
-
-
-    //     const updatedPostDB: CreatePost = {
-    //         id: post.getId(),
-    //         creator_id: post.getCreatorId(),
-    //         content: post.getContent()
-    //     }
-
-
-    //     await postDatabase.updatePost(updatedPostDB)
+    //     await postDatabase.deletePost(postToDeleteDB.id)
 
     //     const output = {
-    //         message: "Post atualizado com sucesso!",
-    //         post: post
+    //         message: "Post deletado com sucesso"
     //     }
 
     //     return output
     // }
-    
-    public deletePost = async (input: any) => {
-        const { idToDelete } = input 
-
-        const postDatabase = new PostDatabase()
-        const postToDeleteDB = await postDatabase.findPostsById(idToDelete)
-
-        if(!postToDeleteDB){
-            throw new NotFoundError("Post não encontrado. Verifique a id.")
-        }
-
-        await postDatabase.deletePost(postToDeleteDB.id)
-
-        const output = {
-            message: "Post deletado com sucesso"
-        }
-
-        return output
-    }
     
 }
