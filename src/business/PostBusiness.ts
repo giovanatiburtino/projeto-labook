@@ -1,5 +1,5 @@
 import { PostDatabase } from "../database/PostDatabase"
-import { GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
+import { CreatePostInputDTO, GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
 import { BadRequestError } from "../errors/BaseRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
@@ -50,44 +50,41 @@ export class PostBusiness{
     }
 
 
-    // public createPost = async (input: any) => {
-    //     const { id, creatorId, content } = input
+    public createPost = async (input: CreatePostInputDTO): Promise <void> => {
+        const { token, content } = input
 
-    //     const postDatabase = new PostDatabase()
-    //     const postDBExists = await postDatabase.findPostsById(id)
+          
+        if(token === undefined){
+            throw new BadRequestError("'Token' ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+        
+        if(payload === null){
+            throw new BadRequestError("Token inválido.")
+        }
+
+        if(typeof content !== "string"){
+            throw new BadRequestError("Content deve ser string.")
+        }
+
+        const id = this.idGenerator.generate()
+
+        const newPost = new Post(
+            id,
+            content,
+            0,
+            0,
+            new Date().toISOString(),
+            new Date().toISOString(),
+            payload.id,
+            payload.name
+        )
     
+        const newPostDB = newPost.toDBModel()
 
-    //     if (postDBExists) {
-    //         throw new BadRequestError("'id' já existe")
-    //     }
-    
-
-    //     const newPost = new Post (
-    //         id,
-    //         creatorId,
-    //         content,
-    //         0,
-    //         0,
-    //         new Date().toISOString(),
-    //         new Date().toISOString()
-    //     )
-    
-    //     const newPostDB: PostDB = {
-    //         id: newPost.getId(),
-    //         creator_id: newPost.getCreatorId(),
-    //         content: newPost.getContent(),
-    //         likes: newPost.getLikes(),
-    //         dislikes: newPost.getDislikes(),
-    //         created_at: newPost.getCreatedAt(),
-    //         updated_at: newPost.getUpdatedAt()
-    //     }
-
-    //     await postDatabase.insertPost(newPostDB)
-
-    //     const output = {message: "Cadastro realizado com sucesso!", posts: newPost}
-
-    //     return output
-    // }
+        await this.postDatabase.insertPost(newPostDB)
+    }
 
     // public editPost = async (input: any) => {
     //     const {

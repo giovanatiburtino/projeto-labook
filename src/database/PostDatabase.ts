@@ -33,7 +33,7 @@ export class PostDatabase extends BaseDatabase{
         return postsDB
     }
 
-    public async insertPost(newPostDB: CreatePost): Promise <void>{
+    public async insertPost(newPostDB: PostDB): Promise <void>{
         await BaseDatabase.connection(PostDatabase.TABLE_POSTS).insert(newPostDB)
     }
 
