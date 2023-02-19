@@ -1,26 +1,53 @@
 import { PostDatabase } from "../database/PostDatabase"
+import { GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
 import { BadRequestError } from "../errors/BaseRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
-import { CreatePost, PostDB } from "../types"
+import { IdGenerator } from "../services/IdGenerator"
+import { TokenManager } from "../services/TokenManager"
+import { CreatePost, PostDB, PostWithCreatorDB } from "../types"
 
 export class PostBusiness{
-    // public getPosts = async () => {
-    //     const postDatabase = new PostDatabase()
-    //     const postsDB: PostDB[] = await postDatabase.findPosts()
+    constructor(
+        private postDatabase: PostDatabase,
+        private idGenerator: IdGenerator,
+        private tokenManager: TokenManager,
+    ){}
 
-    //     const posts = postsDB.map((postDB) => new Post(
-    //         postDB.id,
-    //         postDB.creator_id,
-    //         postDB.content,
-    //         postDB.likes,
-    //         postDB.dislikes,
-    //         postDB.created_at,
-    //         postDB.updated_at
-    //     ))
+    public getPosts = async (input: GetPostsInputDTO): Promise <GetPostsOutputDTO> => {
+        const { token } = input
 
-    //     return ({posts: posts})
-    // }
+        if(token === undefined){
+            throw new BadRequestError("'Token' ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+        
+        if(payload === null){
+            throw new BadRequestError("Token inválido.")
+        }
+
+        const postsWithCreatorsDB: PostWithCreatorDB[] = await this.postDatabase.getPostsWithCreators()
+
+        const posts = postsWithCreatorsDB.map((postWithCreatorDB) => {
+            const post = new Post(
+                postWithCreatorDB.id,
+                postWithCreatorDB.content,
+                postWithCreatorDB.likes,
+                postWithCreatorDB.dislikes,
+                postWithCreatorDB.created_at,
+                postWithCreatorDB.updated_at,
+                postWithCreatorDB.creator_id,
+                postWithCreatorDB.creator_name 
+            )
+
+            return post.toBusinessModel()
+        })
+
+        const output: GetPostsOutputDTO = posts
+        
+        return output
+    }
 
 
     // public createPost = async (input: any) => {

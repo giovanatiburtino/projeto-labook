@@ -50,6 +50,10 @@ export interface PostModel{
     }
 }
 
+export interface PostWithCreatorDB extends PostDB {
+   creator_name: string
+}
+
 export interface CreatePost{
     id: string,
     creator_id: string

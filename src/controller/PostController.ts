@@ -1,26 +1,31 @@
 import { Request, Response } from "express"
 import { PostBusiness } from "../business/PostBusiness"
 import { PostDatabase } from "../database/PostDatabase"
+import { GetPostsInputDTO } from "../dto/UserDTO"
+import { BaseError } from "../errors/BaseError"
 
 export class PostController {
+    constructor(
+        private postBusiness: PostBusiness
+    ){}
+
     public getPosts = async (req: Request, res: Response) => {
         try {
-            const postDatabase = new PostDatabase()
-            const output = await postDatabase.findPosts()
+            const input: GetPostsInputDTO = {
+                token: req.headers.authorization
+            }
+            
+            const output = await this.postBusiness.getPosts(input)
             
             res.status(200).send(output)
 
         } catch (error) {
             console.log(error)
 
-            if(req.statusCode === 200){
-                res.status(500)
-            }
-
-            if(error instanceof Error){
-                res.send(error.message)
+            if(error instanceof BaseError){
+                res.status(error.statusCode).send(error.message)
             } else {
-                res.send("Erro inesperado")
+                res.status(500).send("Erro inesperado")
             }
         }
     }
@@ -81,29 +86,29 @@ export class PostController {
     //     }
     // }
 
-    public deletePost = async (req: Request, res: Response) => {
-        try {
-            const input = {
-                idToDelete: req.params.id
-            }
+    // public deletePost = async (req: Request, res: Response) => {
+    //     try {
+    //         const input = {
+    //             idToDelete: req.params.id
+    //         }
 
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.deletePost(input)
+    //         const postBusiness = new PostBusiness()
+    //         const output = await postBusiness.deletePost(input)
 
-            res.status(200).send(output)
+    //         res.status(200).send(output)
 
-        } catch (error) {
-            console.log(error)
+    //     } catch (error) {
+    //         console.log(error)
             
-            if(req.statusCode === 200){
-                res.status(500)
-            }
+    //         if(req.statusCode === 200){
+    //             res.status(500)
+    //         }
 
-            if(error instanceof Error){
-                res.send(error.message)
-            } else {
-                res.send("Erro inesperado")
-            } 
-        }
-    }
+    //         if(error instanceof Error){
+    //             res.send(error.message)
+    //         } else {
+    //             res.send("Erro inesperado")
+    //         } 
+    //     }
+    // }
 }
