@@ -5,7 +5,7 @@ import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { CreatePost, PostDB, PostWithCreatorDB, USER_ROLES } from "../types"
+import { PostDB, PostWithCreatorDB, USER_ROLES } from "../types"
 
 export class PostBusiness{
     constructor(

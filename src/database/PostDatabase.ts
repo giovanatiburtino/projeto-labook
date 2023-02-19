@@ -1,4 +1,4 @@
-import { CreatePost, PostDB, PostWithCreatorDB } from "../types";
+import { PostDB, PostWithCreatorDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
 

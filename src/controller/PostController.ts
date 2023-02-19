@@ -1,6 +1,5 @@
 import { Request, Response } from "express"
 import { PostBusiness } from "../business/PostBusiness"
-import { PostDatabase } from "../database/PostDatabase"
 import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO } from "../dto/UserDTO"
 import { BaseError } from "../errors/BaseError"
 

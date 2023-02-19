@@ -54,14 +54,3 @@ export interface PostWithCreatorDB extends PostDB {
    creator_name: string
 }
 
-export interface CreatePost{
-    id: string,
-    creator_id: string
-    content: string
-}
-
-export interface LikesAndDislikes{
-    user_id: string,
-    post_id: string,
-    like: number
-}
