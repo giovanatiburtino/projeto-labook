@@ -1,11 +1,11 @@
 import { PostDatabase } from "../database/PostDatabase"
-import { CreatePostInputDTO, EditPostInputDTO, GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
+import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO, GetPostsOutputDTO } from "../dto/UserDTO"
 import { BadRequestError } from "../errors/BaseRequestError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { Post } from "../models/Post"
 import { IdGenerator } from "../services/IdGenerator"
 import { TokenManager } from "../services/TokenManager"
-import { CreatePost, PostDB, PostWithCreatorDB } from "../types"
+import { CreatePost, PostDB, PostWithCreatorDB, USER_ROLES } from "../types"
 
 export class PostBusiness{
     constructor(
@@ -141,23 +141,33 @@ export class PostBusiness{
         await this.postDatabase.updatePost(idToEdit, updatedPostDB)
     }
     
-    // public deletePost = async (input: any) => {
-    //     const { idToDelete } = input 
+    public deletePost = async (input: DeletePostInputDTO): Promise <void> => {
+        const { idToDelete, token } = input 
 
-    //     const postDatabase = new PostDatabase()
-    //     const postToDeleteDB = await postDatabase.findPostsById(idToDelete)
 
-    //     if(!postToDeleteDB){
-    //         throw new NotFoundError("Post não encontrado. Verifique a id.")
-    //     }
+        if(token === undefined){
+            throw new BadRequestError("'Token' ausente")
+        }
 
-    //     await postDatabase.deletePost(postToDeleteDB.id)
+        const payload = this.tokenManager.getPayload(token)
+        
+        if(payload === null){
+            throw new BadRequestError("Token inválido.")
+        }
 
-    //     const output = {
-    //         message: "Post deletado com sucesso"
-    //     }
 
-    //     return output
-    // }
-    
+        const postDB: PostDB | undefined = await this.postDatabase.findPostsById(idToDelete)
+        
+
+        if(!postDB){
+            throw new NotFoundError("O post não foi encontrado. Verifique a id.")
+        }
+
+        if(payload.role !== USER_ROLES.ADMIN && postDB.creator_id !== payload.id){
+            throw new BadRequestError("Somente quem criou a playlist pode deleta-la.")
+        }
+
+
+        await this.postDatabase.deletePost(idToDelete)
+    }
 }

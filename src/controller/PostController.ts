@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { PostBusiness } from "../business/PostBusiness"
 import { PostDatabase } from "../database/PostDatabase"
-import { CreatePostInputDTO, EditPostInputDTO, GetPostsInputDTO } from "../dto/UserDTO"
+import { CreatePostInputDTO, DeletePostInputDTO, EditPostInputDTO, GetPostsInputDTO } from "../dto/UserDTO"
 import { BaseError } from "../errors/BaseError"
 
 export class PostController {
@@ -76,29 +76,29 @@ export class PostController {
         }
     }
 
-    // public deletePost = async (req: Request, res: Response) => {
-    //     try {
-    //         const input = {
-    //             idToDelete: req.params.id
-    //         }
+    public deletePost = async (req: Request, res: Response) => {
+        try {
+            const input: DeletePostInputDTO = {
+                idToDelete: req.params.id,
+                token: req.headers.authorization
+            }
 
-    //         const postBusiness = new PostBusiness()
-    //         const output = await postBusiness.deletePost(input)
+            await this.postBusiness.deletePost(input)
 
-    //         res.status(200).send(output)
+            res.status(200).end()
 
-    //     } catch (error) {
-    //         console.log(error)
+        } catch (error) {
+            console.log(error)
             
-    //         if(req.statusCode === 200){
-    //             res.status(500)
-    //         }
+            if(req.statusCode === 200){
+                res.status(500)
+            }
 
-    //         if(error instanceof Error){
-    //             res.send(error.message)
-    //         } else {
-    //             res.send("Erro inesperado")
-    //         } 
-    //     }
-    // }
+            if(error instanceof Error){
+                res.send(error.message)
+            } else {
+                res.send("Erro inesperado")
+            } 
+        }
+    }
 }
