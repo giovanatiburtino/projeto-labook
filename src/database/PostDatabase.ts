@@ -1,34 +1,42 @@
-import { CreatePost, PostDB } from "../types";
+import { PostDB, PostWithCreatorDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
 
 export class PostDatabase extends BaseDatabase{
-    public static TABLE_POST = "posts"
+    public static TABLE_POSTS = "posts"
 
-    public async findPosts(){ //método async do index
-      
-        const postsDB: PostDB[] = await BaseDatabase.connection(PostDatabase.TABLE_POST)
-        
-        return postsDB
+    public async getPostsWithCreators(){
+        const result: PostWithCreatorDB[] = await BaseDatabase.connection(PostDatabase.TABLE_POSTS).select(
+            "posts.id",
+            "posts.creator_id",
+            "posts.content",
+            "posts.likes",
+            "posts.dislikes",
+            "posts.created_at",
+            "posts.updated_at",
+            "users.name AS creator_name"
+        ).join("users", "posts.creator_id", "=", "users.id")
+
+        return result
     }
 
-    public async findPostsById(id: string | undefined){
-        const [postsDB]: PostDB[] | undefined = await BaseDatabase.connection(PostDatabase.TABLE_POST).where({id})
+    public async findPostsById(id: string): Promise <PostDB | undefined> {
+        const result: PostDB[] = await BaseDatabase.connection(PostDatabase.TABLE_POSTS).select().where({id})
 
-        return postsDB
+        return result[0]
     }
 
-    public async insertPost(newPostDB: CreatePost): Promise <void>{
-        await BaseDatabase.connection(PostDatabase.TABLE_POST).insert(newPostDB)
-    }
-
-
-    public async updatePost(newPostDB: CreatePost): Promise <void>{
-        await BaseDatabase.connection(PostDatabase.TABLE_POST).update(newPostDB).where({id: newPostDB.id})
+    public async insertPost(newPostDB: PostDB): Promise <void>{
+        await BaseDatabase.connection(PostDatabase.TABLE_POSTS).insert(newPostDB)
     }
 
 
-    public async deletePost(id: string | undefined): Promise <void>{
-        await BaseDatabase.connection(PostDatabase.TABLE_POST).delete().where({id})
+    public async updatePost(idToEdit: string, newPostDB: PostDB): Promise <void>{
+        await BaseDatabase.connection(PostDatabase.TABLE_POSTS).update(newPostDB).where({id: idToEdit})
+    }
+
+
+    public async deletePost(idToDelete: string): Promise <void>{
+        await BaseDatabase.connection(PostDatabase.TABLE_POSTS).delete().where({id: idToDelete})
     }
 }
