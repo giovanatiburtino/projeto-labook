@@ -1,4 +1,4 @@
-import { LikeOrDislikeDB, PostDB, PostWithCreatorDB } from "../types";
+import { LikeOrDislikeDB, PostDB, PostWithCreatorDB, POST_LIKE } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
 
@@ -58,5 +58,32 @@ export class PostDatabase extends BaseDatabase{
 
     public async likeOrDislikePost(likeDislike: LikeOrDislikeDB): Promise <void>{
         await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES).insert(likeDislike)
+    }
+
+    public async findLikeDislike(likeDislikeToFind: LikeOrDislikeDB): Promise <POST_LIKE | null>{
+        const [ likeDislikeDB ]: LikeOrDislikeDB[] = await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES).select().where({
+            user_id: likeDislikeToFind.user_id,
+            post_id: likeDislikeToFind.post_id
+        })
+
+        if(likeDislikeDB){
+            return likeDislikeDB.like === 1 ? POST_LIKE.ALREADY_LIKED : POST_LIKE.ALREADY_DISLIKED
+        } else {
+            return null
+        }
+    }
+
+    public async removeLikeDislike(likeDislike: LikeOrDislikeDB): Promise <void>{
+        await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES).delete().where({
+            user_id: likeDislike.user_id,
+            post_id: likeDislike.post_id
+        })
+    }
+
+    public async updateLikeDislike(likeDislike: LikeOrDislikeDB){
+        await BaseDatabase.connection(PostDatabase.TABLE_LIKES_DISLIKES).update(likeDislike).where({
+            user_id: likeDislike.user_id,
+            post_id: likeDislike.post_id
+        }) 
     }
 }
