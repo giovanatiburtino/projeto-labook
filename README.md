@@ -10,7 +10,7 @@ O Labook é uma API de uma rede social que disponibiliza endpoints de interaçã
 - <a href="#tecnologias-utilizadas">Tecnologias utilizadas</a>
 - <a href="#autores">Autores</a>
 
-## Funcionalidades do Projeto
+## 💻 Funcionalidades do Projeto
 
 - Endpoints
     - Signup
@@ -30,7 +30,7 @@ O Labook é uma API de uma rede social que disponibiliza endpoints de interaçã
     - Arquitetura em Camadas
     
 
-## Banco de dados
+## 🗃️ Banco de dados
 ![projeto-labook](https://user-images.githubusercontent.com/29845719/216036534-2b3dfb48-7782-411a-bffd-36245b78594e.png)
 
 https://dbdiagram.io/d/63dec1d6296d97641d7e77af
@@ -39,7 +39,7 @@ https://dbdiagram.io/d/63dec1d6296d97641d7e77af
 [Link documentação](https://documenter.getpostman.com/view/24461088/2s93CPrCnJ)
 
 
-## Tecnologias Utilizadas
+## 🚀 Tecnologias Utilizadas
 
 1.[NodeJS](https://nodejs.org/en/)
 
@@ -53,6 +53,6 @@ https://dbdiagram.io/d/63dec1d6296d97641d7e77af
 
 6.[Postman](https://www.postman.com/)
 
-## Autores
+## 👩‍💻 Autores
 
 [Linkedin](https://www.linkedin.com/ingiovana-ferreira-tiburtino-475486216/)
