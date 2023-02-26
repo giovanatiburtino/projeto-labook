@@ -35,7 +35,7 @@ O Labook é uma API de uma rede social que disponibiliza endpoints de interaçã
 
 https://dbdiagram.io/d/63dec1d6296d97641d7e77af
 
-## Documentação Postman
+## 💿 Documentação Postman
 [Link documentação](https://documenter.getpostman.com/view/24461088/2s93CPrCnJ)
 
 
