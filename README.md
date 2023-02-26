@@ -4,11 +4,11 @@ O Labook é uma API de uma rede social que disponibiliza endpoints de interaçã
 
 ## Índice
 
-- <a href="#funcionalidades-do-projeto">Funcionalidades do Projeto</a>
-- <a href="%EF%B8%8F-banco-de-dados">Banco de dados</a>
-- <a href="#documentação-postman">Documentação</a>
-- <a href="#tecnologias-utilizadas">Tecnologias utilizadas</a>
-- <a href="#autores">Autores</a>
+- <a href="#-funcionalidades-do-projeto">Funcionalidades do Projeto</a>
+- <a href="-banco-de-dados">Banco de dados</a>
+- <a href="#-documentação-postman">Documentação</a>
+- <a href="#-tecnologias-utilizadas">Tecnologias utilizadas</a>
+- <a href="#-autores">Autores</a>
 
 ## 💻 Funcionalidades do Projeto
 
